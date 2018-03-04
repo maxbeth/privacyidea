@@ -228,14 +228,15 @@ class Audit(AuditBase):
                           clearance_level=self.audit_data.get("clearance_level")
                           )
             self.session.add(le)
-            self.session.commit()
             # Add the signature
             if self.sign_object:
+                # flush is necessary for autoincrement values (id)
+                self.session.flush()
                 s = self._log_to_string(le)
                 sign = self.sign_object.sign(s)
                 le.signature = sign
                 self.session.merge(le)
-                self.session.commit()
+            self.session.commit()
         except Exception as exx:  # pragma: no cover
             log.error("exception {0!r}".format(exx))
             log.error("DATA: {0!s}".format(self.audit_data))
