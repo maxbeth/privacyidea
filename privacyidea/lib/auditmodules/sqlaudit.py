@@ -236,9 +236,6 @@ class Audit(AuditBase):
             if self.sign_object:
                 # flush is necessary for autoincrement values (id)
                 self.session.flush()
-                # Fallback to commit if sqlalchemy does not fill the id
-                if le.id is None:
-                    self.session.commit()
                 s = self._log_to_string(le)
                 sign = self.sign_object.sign(s)
                 le.signature = sign
