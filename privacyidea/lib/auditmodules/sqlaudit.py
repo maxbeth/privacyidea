@@ -41,6 +41,7 @@ token database.
 import logging
 from privacyidea.lib.auditmodules.base import (Audit as AuditBase, Paginate)
 from privacyidea.lib.crypto import Sign
+from privacyidea.models import db
 from sqlalchemy import MetaData, cast, String
 from sqlalchemy import asc, desc, and_, or_
 import datetime
@@ -87,27 +88,30 @@ class Audit(AuditBase):
         
         # an Engine, which the Session will use for connection
         # resources
-        connect_string = self.config.get("PI_AUDIT_SQL_URI", self.config.get(
-            "SQLALCHEMY_DATABASE_URI"))
-        log.debug("using the connect string {0!s}".format(connect_string))
-        try:
-            pool_size = self.config.get("PI_AUDIT_POOL_SIZE", 20)
-            self.engine = create_engine(
-                connect_string,
-                pool_size=pool_size,
-                pool_recycle=self.config.get("PI_AUDIT_POOL_RECYCLE", 600))
-            log.debug("Using SQL pool_size of {0!s}".format(pool_size))
-        except TypeError:
-            # SQLite does not support pool_size
-            self.engine = create_engine(connect_string)
-            log.debug("Using no SQL pool_size.")
-
-        # create a configured "Session" class
-        Session = sessionmaker(bind=self.engine)
-
-        # create a Session
-        self.session = Session()
-        self.session._model_changes = {}
+        connect_string = self.config.get("PI_AUDIT_SQL_URI", None)
+        if connect_string is not None:
+            log.debug("using the connect string {0!s}".format(connect_string))
+            try:
+                pool_size = self.config.get("PI_AUDIT_POOL_SIZE", 20)
+                self.engine = create_engine(
+                    connect_string,
+                    pool_size=pool_size,
+                    pool_recycle=self.config.get("PI_AUDIT_POOL_RECYCLE", 600))
+                log.debug("Using SQL pool_size of {0!s}".format(pool_size))
+            except TypeError:
+                # SQLite does not support pool_size
+                self.engine = create_engine(connect_string)
+                log.debug("Using no SQL pool_size.")
+    
+            # create a configured "Session" class
+            Session = sessionmaker(bind=self.engine)
+    
+            # create a Session
+            self.session = Session()
+            self.session._model_changes = {}
+        else:
+            log.debug("Using the default database")
+            self.session = db.session;
 
     def _truncate_data(self):
         """
