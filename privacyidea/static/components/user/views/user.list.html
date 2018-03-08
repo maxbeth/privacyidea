@@ -8,29 +8,29 @@
     <table class="table table-bordered table-striped">
         <thead>
         <tr>
-            <th><translate>username</translate>
+	    <th><div style="white-space:nowrap"><translate>username</translate>
                 <pi-filter ng-model="params.usernameFilter"
                            ng-change="_getUsers('livesearch')"
                            ng-keypress="($event.which==13)?_getUsers():return"
-                           ></pi-filter>
+                ></pi-filter></div>
             </th>
-            <th><translate>surname</translate>
+	    <th><div style="white-space:nowrap"><translate>surname</translate>
                 <pi-filter ng-model="params.surnameFilter"
                            ng-change="_getUsers('livesearch')"
                            ng-keypress="($event.which==13)?_getUsers():return"
-                ></pi-filter>
+                ></pi-filter></div>
             </th>
-            <th><translate>givenname</translate>
+	    <th><div style="white-space:nowrap"><translate>givenname</translate>
                 <pi-filter ng-model="params.givennameFilter"
                            ng-change="_getUsers('livesearch')"
                            ng-keypress="($event.which==13)?_getUsers():return"
-                ></pi-filter>
+                ></pi-filter></div>
             </th>
-            <th><translate>email</translate>
+	    <th><div style="white-space:nowrap"><translate>email</translate>
                 <pi-filter ng-model="params.emailFilter"
                            ng-change="_getUsers('livesearch')"
                            ng-keypress="($event.which==13)?_getUsers():return"
-                ></pi-filter>
+                ></pi-filter></div>
             </th>
             <th translate>phone</th>
             <th translate>mobile</th>

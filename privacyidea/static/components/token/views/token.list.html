@@ -15,7 +15,7 @@
     <table class="table table-bordered table-striped">
         <thead>
         <tr>
-            <th>
+            <th><div style="white-space:nowrap">
                 <button class="btn btn-default unsorted"
                         pi-sort-by="serial"
                         translate>serial
@@ -24,8 +24,9 @@
                            ng-change="get('livesearch')"
                            ng-keypress="($event.which==13)?get():return"
                 ></pi-filter>
+                </div>
             </th>
-            <th>
+            <th><div style="white-space:nowrap">
                 <button class="btn btn-default unsorted"
                         pi-sort-by="tokentype"
                         translate>type
@@ -34,15 +35,17 @@
                            ng-change="get('livesearch')"
                            ng-keypress="($event.which==13)?get():return"
                 ></pi-filter>
+                </div>
             </th>
-            <th>
+            <th><div style="white-space:nowrap">
                 <button pi-sort-by="active"
                         class="btn btn-default
                             unsorted"
                         translate>active
                 </button>
+                </div>
             </th>
-            <th>
+            <th><div style="white-space:nowrap">
                 <button pi-sort-by="description"
                         class="btn btn-default
                        unsorted"
@@ -52,13 +55,15 @@
                            ng-change="get('livesearch')"
                            ng-keypress="($event.which==13)?get():return"
                 ></pi-filter>
+                </div>
             </th>
-            <th>
+            <th><div style="white-space:nowrap">
                 <button pi-sort-by="failcount"
                         class="btn btn-default
                          unsorted"
                         translate>failcounter
                 </button>
+                </div>
             </th>
             <th ng-show="loggedInUser.role == 'admin'" translate>user</th>
             <th ng-show="loggedInUser.role == 'admin'" translate>realm</th>
