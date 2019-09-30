@@ -2299,6 +2299,7 @@ def get_static_policy_definitions(scope=None):
                 'desc': _("If this is checked, the seed "
                           "will be displayed as text during enrollment.")
             },
+<<<<<<< HEAD
             ACTION.SHOW_NODE: {
                 'type': 'bool',
                 'desc': _("If this is checked, the privacyIDEA Node name will be displayed "
@@ -2323,6 +2324,12 @@ def get_static_policy_definitions(scope=None):
                 'desc': _("This action adds a QR code in the enrollment page for "
                           "HOTP, TOTP and Push tokens, that lead to this given URL."),
                 'group': 'QR Codes'
+=======
+            ACTION.CONFIRM_ACTION: {
+                'type': 'str',
+                'desc': _("Ask for confirmation before execute certain actions."),
+                'value': ["0 - Default", "1 - Critical", "2 - Sane", "3 - Fearful"]
+>>>>>>> db10d52e... Implement policy to diplay confirm_action dialogs
             }
         }
 
