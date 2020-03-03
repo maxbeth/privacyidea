@@ -440,27 +440,71 @@ tag.
 
 .. note:: The footer will only be used, if the header is also set.
 
-.. _policy_indexedsecret:
+.. _webauthn_authn_allowed_transports:
 
-indexedsecret_challenge_text
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+webauthn_allowed_transports
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Indexed Secret Token asks the user to provide the characters of the
-secret from certain positions. The default text is:
+type: string
 
-*Please enter the position 3,1,6,7 from your secret.*
+This action determines, which transports may be used to communicate with the
+authenticator, during authentication. For instance, if the authenticators used
+support both an USB connection and NFC wireless communication, they can be
+limited to USB only using this policy. The allowed transports are given as a
+space-separated list.
 
-with *3,1,6,7* being the positions of the characters, the user is supposed to
-enter. This text can be changed with this policy setting.
-The text needs to contain the python formatting tag *{0!s}* which will
-be replaced with the list of the requested positions.
+The default is to allow all transports (equivalent to a value of `usb ble nfc
+internal lightning`).
 
-For more details of this token type see :ref:`indexedsecret_token`.
+.. _webauthn_authn_timeout:
 
-indexedsecret_count
-~~~~~~~~~~~~~~~~~~~
+webauthn_timeout
+~~~~~~~~~~~~~~~~
 
-The Indexed Secret Token asks the used for a number of characters from
-a shared secret. The default number to ask is 2.
+type: integer
 
-The number of requested positions can be changed using this policy.
+This action sets the time in seconds the user has to confirm an authentication
+request on his WebAuthn authenticator.
+
+This is a client-side setting, that governs how long the client waits for the
+authenticator. It is independent of the time for which a challenge for a
+challenge response token is valid, which is governed by the server and
+controlled by a separate setting. This means, that if you want to increase this
+timeout beyond two minutes, you will have to also increase the challenge
+validity time, as documented in :ref:`challenge_validity_time`.
+
+This setting is a hint. It is interpreted by the client and may be adjusted by
+an arbitrary amount in either direction, or even ignored entirely.
+
+The default timeout is 60 seconds.
+
+.. note:: If you set this policy you may also want to set
+    :ref:`webauthn_enroll_timeout`.
+
+.. _webauthn_authn_user_verification_requirement:
+
+webauthn_user_verification_requirement
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+type: string
+
+This action configures whether the user's identity should be checked when
+authenticating with a WebAuthn token. If this is set to required, any user
+signing in with their WebAuthn token will have to provide some form of
+verification. This might be biometric identification, or knowledge-based,
+depending on the authenticator used.
+
+This defaults to `preferred`, meaning user verification will be performed if
+supported by the token.
+
+.. note:: User verification is different from user presence checking. The
+    presence of a user will always be confirmed (by asking the user to take
+    action on the token, which is usually done by tapping a button on the
+    authenticator). User verification goes beyond this by ascertaining, that the
+    user is indeed the same user each time (for example through biometric
+    means), only set this to `required`, if you know for a fact, that you have
+    authenticators, that actually support some form of user verification (these
+    are still quite rare in practice).
+
+.. note:: If you configure this, you will likely also want to configure
+    :ref:`webauthn_enroll_user_verification_requirement`.
