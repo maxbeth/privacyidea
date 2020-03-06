@@ -268,7 +268,7 @@ class PrePolicyDecoratorTestCase(MyApiTestCase):
         g.client_ip = env["REMOTE_ADDR"]
         req = Request(env)
         req.all_data = {"filename": "token.xml"}
-
+        req.User = User()
         # Set a policy, that does allow the action
         set_policy(name="pol1",
                    scope=SCOPE.ADMIN,
@@ -286,6 +286,7 @@ class PrePolicyDecoratorTestCase(MyApiTestCase):
         g.client_ip = env["REMOTE_ADDR"]
         req = Request(env)
         req.all_data = {"filename": "token.xml"}
+        req.User = User()
         self.assertRaises(PolicyError,
                           check_token_upload, req)
         # finally delete policy
@@ -797,6 +798,7 @@ class PrePolicyDecoratorTestCase(MyApiTestCase):
         req.all_data = {
                         "user": "cornelius",
                         "realm": "home"}
+        req.User = User()
         # The minimum OTP length is 4
         self.assertRaises(PolicyError, check_otp_pin, req)
 
@@ -866,6 +868,7 @@ class PrePolicyDecoratorTestCase(MyApiTestCase):
 
         req.all_data = {"user": "cornelius",
                         "realm": "home"}
+        req.User = User()
         # The minimum OTP length is 4
         self.assertRaises(PolicyError, check_otp_pin, req)
 
@@ -945,6 +948,7 @@ class PrePolicyDecoratorTestCase(MyApiTestCase):
                         "realm": "home",
                         "pin": "123456",
                         "type": "spass"}
+        req.User = User()
         # The minimum OTP length is 8
         self.assertRaises(PolicyError, check_otp_pin, req)
 
