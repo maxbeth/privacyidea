@@ -3378,27 +3378,60 @@ class PostPolicyDecoratorTestCase(MyApiTestCase):
         delete_policy("pol_qr2")
         delete_policy("pol_qr3")
 
-        # Test if the webui gets the information about the preset attribute for indexedsecret token
-        set_policy(name="pol_indexed1", scope=SCOPE.WEBUI,
-                   action="indexedsecret_{0!s}=preattr".format(PIIXACTION.PRESET_ATTRIBUTE))
+    def test_09_get_webui_settings(self):
+        # Test that policies like tokenpagesize are also user dependent
+        self.setUp_user_realms()
 
+        # The request with an OTP value and a PIN of a user, who has not
+        # token assigned
+        builder = EnvironBuilder(method='POST',
+                                 data={},
+                                 headers={})
+        env = builder.get_environ()
+        env["REMOTE_ADDR"] = "192.168.0.1"
+        g.client_ip = env["REMOTE_ADDR"]
+        req = Request(env)
+        req.all_data = {"user": "cornelius",
+                        "pass": "offline287082"}
+
+        res = {"jsonrpc": "2.0",
+               "result": {"status": True,
+                          "value": {"role": "user",
+                                    "username": "cornelius"}},
+               "version": "privacyIDEA test",
+               "id": 1}
+        resp = jsonify(res)
+
+        new_response = get_webui_settings(req, resp)
+        jresult = new_response.json
+        self.assertEqual(jresult.get("result").get("value").get(
+            "token_wizard"), False)
+
+        # Set a policy. User has not token, so "token_wizard" will be True
+        set_policy(name="pol_pagesize",
+                   scope=SCOPE.WEBUI,
+                   realm=self.realm1,
+                   action="{0!s}=177".format(ACTION.TOKENPAGESIZE))
         g.policy_object = PolicyClass()
         new_response = get_webui_settings(req, resp)
         jresult = new_response.json
-        self.assertEqual("preattr",
-                         jresult.get("result").get("value").get("indexedsecret_preset_attribute"))
+        self.assertEqual(jresult.get("result").get("value").get(
+            ACTION.TOKENPAGESIZE), 177)
 
-        delete_policy("pol_indexed1")
-
-        # Test if the webui gets the information, that a normal user has force_attribute
-        set_policy(name="pol_indexed_force", scope=SCOPE.USER,
-                   action="indexedsecret_{0!s}=force".format(PIIXACTION.FORCE_ATTRIBUTE))
+        # Now we change the policy pol_pagesize this way, that it is only valid for the user "root"
+        set_policy(name="pol_pagesize",
+                   scope=SCOPE.WEBUI,
+                   realm=self.realm1,
+                   user="root",
+                   action="{0!s}=177".format(ACTION.TOKENPAGESIZE))
+        # This way the user "cornelius" gets the default pagesize again
         g.policy_object = PolicyClass()
         new_response = get_webui_settings(req, resp)
         jresult = new_response.json
-        # Check that the force_attribute indicator is set to "1"
-        self.assertEqual(1, jresult.get("result").get("value").get("indexedsecret_force_attribute"))
-        delete_policy("pol_indexed_force")
+        self.assertEqual(jresult.get("result").get("value").get(
+            ACTION.TOKENPAGESIZE), 15)
+
+        delete_policy("pol_pagesize")
 
     def test_16_init_token_defaults(self):
         g.logged_in_user = {"username": "cornelius",
