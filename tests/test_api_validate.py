@@ -2665,12 +2665,12 @@ class ValidateAPITestCase(MyApiTestCase):
         r = init_token({"type": "hotp",
                         "genkey": 1,
                         "pin": "trigpin",
-                        "serial": "tok_hotp"},
+                        "serial": "tok1"},
                        user=User("cornelius", self.realm1))
         r = init_token({"type": "totp",
                         "genkey": 1,
                         "pin": "trigpin",
-                        "serial": "tok_totp"},
+                        "serial": "tok2"},
                        user=User("cornelius", self.realm1))
         # Hotp and totp are allowed for trigger challenge
         set_policy(name="pol_chalresp", scope=SCOPE.AUTH,
@@ -2683,36 +2683,23 @@ class ValidateAPITestCase(MyApiTestCase):
                                            headers={"Authorization": self.at}):
             res = self.app.full_dispatch_request()
             self.assertTrue(res.status_code == 200, res)
+            result = res.json.get("result")
             detail = res.json.get("detail")
+            transaction_id = detail.get("transaction_id")
 
         # check, that both challenges were triggered, although
         # the application tried to trigger only hotp
-        triggered_serials = [item['serial'] for item in detail.get("multi_challenge")]
-        self.assertTrue("tok_hotp" in triggered_serials and "tok_totp" in triggered_serials)
 
-        # Set a policy, that the application is allowed to specify tokentype
-        set_policy(name="pol_application_tokentype",
-                   scope=SCOPE.AUTHZ,
-                   action=ACTION.APPLICATION_TOKENTYPE)
+        # Allow application to choose token type
 
-        # Trigger another challenge for HOTP
-        with self.app.test_request_context('/validate/triggerchallenge',
-                                           method='POST',
-                                           data={"user": "cornelius", "type": "hotp"},
-                                           headers={"Authorization": self.at}):
-            res = self.app.full_dispatch_request()
-            self.assertTrue(res.status_code == 200, res)
-            detail = res.json.get("detail")
+        # Trigger challenge for HOTP
 
         # check that only HOTP was triggered
-        triggered_serials = [item['serial'] for item in detail.get("multi_challenge")]
-        self.assertTrue("tok_hotp" in triggered_serials and "tok_totp" not in triggered_serials)
 
         # Delete tokens and policies
-        remove_token("tok_hotp")
-        remove_token("tok_totp")
+        remove_token("tok1")
+        remove_token("tok2")
         delete_policy("pol_chalresp")
-        delete_policy("pol_application_tokentype")
 
 
 

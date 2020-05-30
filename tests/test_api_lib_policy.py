@@ -2836,7 +2836,7 @@ class PrePolicyDecoratorTestCase(MyApiTestCase):
         req.all_data = {"type": "tokentype"}
         req.User = User("cornelius", self.realm1)
         check_application_tokentype(req)
-        # Check for the tokentype
+        # Check, that the realm was not set, since there was no user in the request
         self.assertEqual(req.all_data.get("type"), "tokentype")
 
         # delete the policy, then the application is not allowed to specify the tokentype
