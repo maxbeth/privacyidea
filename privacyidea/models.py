@@ -2135,7 +2135,7 @@ class SMSGateway(MethodsMixin, db.Model):
         """
         res = {}
         for option in self.options:
-            if option.Type == "option" or option.Type is None:
+            if option.Type == "option" or not option.Type:
                 res[option.Key] = option.Value
         return res
 
