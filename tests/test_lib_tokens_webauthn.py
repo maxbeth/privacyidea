@@ -456,3 +456,6 @@ class WebAuthnTestCase(unittest.TestCase):
 
         with self.assertRaises(AuthenticationRejectedException):
             webauthn_assertion_response.verify()
+
+    def test_07_webauthn_b64_decode(self):
+        self.assertEqual(webauthn_b64_decode(URL_DECODE_TEST_STRING), URL_DECODE_EXPECTED_RESULT)
