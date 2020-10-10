@@ -22,15 +22,23 @@
         <table class="table table-bordered table-striped" id="tableauditlog">
             <thead>
             <tr>
-                <th ng-if="audit_columns.includes('number')"><translate>number</translate></th>
-                <th ng-if="audit_columns.includes('date')"
-                    class="pifilter"><translate>date</translate>
+                <th translate>number</th>
+                <th class="pifilter"><translate>enddate</translate>
                     <pi-filter ng-model="dateFilter"
                                ng-change="getAuditList('livesearch')"
                                ng-keypress="($event.which==13)?getAuditList():return">
                 </th>
-                <th ng-if="audit_columns.includes('action')"
-                    class="pifilter"><translate>action</translate>
+                <th class="pifilter"><translate>startdate</translate>
+                    <pi-filter ng-model="startdateFilter"
+                               ng-change="getAuditList('livesearch')"
+                               ng-keypress="($event.which==13)?getAuditList():return">
+                </th>
+                <th class="pifilter"><translate>duration</translate>
+                    <pi-filter ng-model="durationFilter"
+                               ng-change="getAuditList('livesearch')"
+                               ng-keypress="($event.which==13)?getAuditList():return">
+                </th>
+                <th class="pifilter"><translate>action</translate>
                     <pi-filter ng-model="actionFilter"
                                ng-change="getAuditList('livesearch')"
                                ng-keypress="($event.which==13)?getAuditList():return">
@@ -117,8 +125,10 @@
             <tr ng-repeat="audit in auditdata.auditdata">
                 <td ng-if="audit_columns.includes('number')">{{ audit.number }}</td>
                 <td>{{ audit.date | date:dateFormat }}</td>
-                <td ng-if="audit_columns.includes('action')">{{ audit.action }}</td>
-                <td ng-if="audit_columns.includes('success')"><span status-class="{{ audit.success }}">
+                <td>{{ audit.startdate | date:dateFormat }}</td>
+                <td>{{ audit.duration }}</td>
+                <td>{{ audit.action }}</td>
+                <td><span status-class="{{ audit.success }}">
                 {{ audit.success }}
             </span></td>
                 <td ng-if="audit_columns.includes('action_detail')">{{ audit.action_detail }}</td>
