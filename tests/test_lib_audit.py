@@ -375,6 +375,7 @@ class AuditFileTestCase(OverrideConfigTestCase):
             capture.check_present(
                 ('privacyidea.lib.auditmodules.loggeraudit', 'INFO',
                  '{{"action": "No PI_AUDIT_LOGGER_QUALNAME given", "policies": "", '
+                 '"startdate": "{timestamp}", '
                  '"timestamp": "{timestamp}"}}'.format(timestamp=current_utc_time.isoformat())))
 
         # Now change the qualname to 'pi-audit'
@@ -387,6 +388,7 @@ class AuditFileTestCase(OverrideConfigTestCase):
             capture.check_present(
                 ('pi-audit', 'INFO',
                  '{{"action": "PI_AUDIT_LOGGER_QUALNAME given", "policies": "", '
+                 '"startdate": "{timestamp}", '
                  '"timestamp": "{timestamp}"}}'.format(timestamp=current_utc_time.isoformat())))
 
 
