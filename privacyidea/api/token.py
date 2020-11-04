@@ -924,6 +924,7 @@ def loadtokens_api(filename=None):
     if trealms:
         tokenrealms = trealms.split(",")
 
+    not_imported_names = []
     TOKENS = {}
     token_file = request.files['file']
     file_contents = ""
@@ -967,8 +968,8 @@ def loadtokens_api(filename=None):
     elif file_type in ["yubikeycsv", "Yubikey CSV"]:
         TOKENS = parseYubicoCSV(file_contents)
     elif file_type in ["pskc"]:
-        TOKENS = parsePSKCdata(file_contents, preshared_key_hex=aes_psk,
-                               password=aes_password, validate_mac=aes_validate_mac)
+        TOKENS, not_imported_names = parsePSKCdata(file_contents, preshared_key_hex=aes_psk,
+                                                   password=aes_password, validate_mac=aes_validate_mac)
 
     # Now import the Tokens from the dictionary
     ret = ""
@@ -990,7 +991,7 @@ def loadtokens_api(filename=None):
                         'success': True})
     # logTokenNum()
 
-    return send_result(len(TOKENS))
+    return send_result({'n_imported': len(TOKENS), 'n_not_imported': len(not_imported_names)})
 
 
 @token_blueprint.route('/copypin', methods=['POST'])
