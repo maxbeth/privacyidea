@@ -926,7 +926,7 @@ def loadtokens_api(filename=None):
     if trealms:
         tokenrealms = trealms.split(",")
 
-    not_imported_names = []
+    not_imported_serials = []
     TOKENS = {}
     token_file = request.files['file']
     file_contents = ""
