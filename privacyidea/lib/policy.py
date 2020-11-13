@@ -1962,7 +1962,7 @@ def get_static_policy_definitions(scope=None):
                 'group': GROUP.TOKEN},
             ACTION.REGISTRATIONCODE_CONTENTS: {
                 'type': 'str',
-                "desc": _("Specifiy the required "
+                "desc": _("Specify the required "
                           "contents of the registration code. "
                           "(c)haracters, (n)umeric, "
                           "(s)pecial. Use modifiers +/- or a list "
