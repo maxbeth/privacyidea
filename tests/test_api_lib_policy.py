@@ -46,7 +46,8 @@ from privacyidea.api.lib.prepolicy import (check_token_upload,
                                            check_admin_tokenlist, pushtoken_disable_wait,
                                            webauthntoken_auth, webauthntoken_authz,
                                            webauthntoken_enroll, webauthntoken_request,
-                                           webauthntoken_allowed, check_application_tokentype)
+                                           webauthntoken_allowed, check_application_tokentype,
+                                           required_piv_attestation)
 from privacyidea.lib.realm import set_realm as create_realm
 from privacyidea.lib.realm import delete_realm
 from privacyidea.api.lib.postpolicy import (check_serial, check_tokentype,
@@ -2964,39 +2965,30 @@ class PrePolicyDecoratorTestCase(MyApiTestCase):
         # Check that the tokentype was removed
         self.assertEqual(req.all_data.get("type"), None)
 
-    def test_35_init_registrationcode_length_contents(self):
-        g.logged_in_user = {"username": "admin1",
-                            "realm": "",
-                            "role": "admin"}
+    def test_35_require_piv_attestation(self):
+        from privacyidea.lib.tokens.certificatetoken import ACTION, REQUIRE_ACTIONS
         builder = EnvironBuilder(method='POST',
-                                 data={'type': "registration"},
+                                 data={'user': "cornelius"},
                                  headers={})
         env = builder.get_environ()
+        # Set the remote address so that we can filter for it
+        env["REMOTE_ADDR"] = "10.0.0.1"
+        g.client_ip = env["REMOTE_ADDR"]
         req = Request(env)
 
-        # first test without any policy
-        req.all_data = {"user": "cornelius", "realm": "home", "type": "registration"}
-        init_registrationcode_length_contents(req)
-        # Check, if the tokenlabel was added
-        self.assertEqual(req.all_data.get("registration.length"), DEFAULT_LENGTH)
-        self.assertEqual(req.all_data.get("registration.contents"), DEFAULT_CONTENTS)
+        # Set a policy, that the application is allowed to specify tokentype
+        set_policy(name="pol1",
+                   scope=SCOPE.ENROLL,
+                   action="{0!s}={1!s}".format(ACTION.REQUIRE_ATTESTATION, REQUIRE_ACTIONS.REQUIRE_AND_VERIFY))
+        g.policy_object = PolicyClass()
 
-        # now create a policy for the length of the registration code
-        set_policy(name="reg_length",
-                   scope=SCOPE.ENROLL,
-                   action="{0!s}={1!s}".format(ACTION.REGISTRATIONCODE_LENGTH, 6))
-        set_policy(name="reg_contents",
-                   scope=SCOPE.ENROLL,
-                   action="{0!s}={1!s}".format(ACTION.REGISTRATIONCODE_CONTENTS, "+n"))
-        # request, that matches the policy
-        req.all_data = {"user": "cornelius", "realm": "home", "type": "registration"}
-        init_registrationcode_length_contents(req)
-        # Check, if the tokenlabel was added
-        self.assertEqual(req.all_data.get("registration.length"), "6")
-        self.assertEqual(req.all_data.get("registration.contents"), "+n")
-        # delete policy
-        delete_policy("reg_length")
-        delete_policy("reg_contents")
+        # provide an empty attestation
+        req.all_data = {"attestation": "",
+                        "type": "certificate"}
+        req.User = User("cornelius", self.realm1)
+        # This will fail, since the attestation is required.
+        self.assertRaises(PolicyError, required_piv_attestation, req)
+        delete_policy("pol1")
 
 
 class PostPolicyDecoratorTestCase(MyApiTestCase):
