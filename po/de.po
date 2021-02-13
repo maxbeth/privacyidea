@@ -4335,8 +4335,8 @@ msgstr "TLS verwenden"
 msgid "Use SSL"
 msgstr "SSL verwenden"
 
-#: privacyidea/static/components/token/views/token.enroll.hotp.html:35
-#: privacyidea/static/components/token/views/token.enroll.totp.html:35
+#: privacyidea/static/components/token/views/token.enroll.hotp.html:32
+#: privacyidea/static/components/token/views/token.enroll.totp.html:31
 msgid "Use two-step enrollment with the privacyIDEA Authenticator App"
 msgstr "Ausrollen mit Zwei-Schritt und der privacyIDEA Authenticator App"
 
