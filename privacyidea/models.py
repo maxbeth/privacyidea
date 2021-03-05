@@ -2243,6 +2243,7 @@ class PrivacyIDEAServer(MethodsMixin, db.Model):
     # This is the FQDN or the IP address
     url = db.Column(db.Unicode(255), nullable=False)
     tls = db.Column(db.Boolean, default=False)
+    ssl = db.Column(db.Boolean, default=False)
     description = db.Column(db.Unicode(2000), default=u'')
 
     def save(self):
@@ -2258,6 +2259,8 @@ class PrivacyIDEAServer(MethodsMixin, db.Model):
             values = {"url": self.url}
             if self.tls is not None:
                 values["tls"] = self.tls
+            if self.ssl is not None:
+                values["ssl"] = self.ssl
             if self.description is not None:
                 values["description"] = self.description
             PrivacyIDEAServer.query.filter(PrivacyIDEAServer.identifier ==

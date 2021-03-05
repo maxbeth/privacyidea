@@ -520,7 +520,6 @@ def get_webui_settings(request, response):
             dialog_no_token_pol = Match.user(g, scope=SCOPE.WEBUI, action=ACTION.DIALOG_NO_TOKEN,
                                              user_object=user_obj).any()
             dialog_no_token = dialog_no_token_pol and (user_token_num == 0)
-<<<<<<< HEAD
         user_details_pol = Match.generic(g, scope=SCOPE.WEBUI, action=ACTION.USERDETAILS,
                                          user=loginname, realm=realm).policies()
         search_on_enter = Match.generic(g, scope=SCOPE.WEBUI, action=ACTION.SEARCH_ON_ENTER,
@@ -544,22 +543,6 @@ def get_webui_settings(request, response):
         qr_image_android = create_img(DEFAULT_ANDROID_APP_URL) if qr_android_authenticator else None
         qr_image_ios = create_img(DEFAULT_IOS_APP_URL) if qr_ios_authenticator else None
         qr_image_custom = create_img(list(qr_custom_authenticator_url)[0]) if qr_custom_authenticator_url else None
-=======
-        user_details_pol = Match.realm(g, scope=SCOPE.WEBUI, action=ACTION.USERDETAILS,
-                                       realm=realm).policies()
-        search_on_enter = Match.realm(g, scope=SCOPE.WEBUI, action=ACTION.SEARCH_ON_ENTER,
-                                      realm=realm).policies()
-        hide_welcome = Match.realm(g, scope=SCOPE.WEBUI, action=ACTION.HIDE_WELCOME,
-                                   realm=realm).any()
-        hide_buttons = Match.realm(g, scope=SCOPE.WEBUI, action=ACTION.HIDE_BUTTONS,
-                                   realm=realm).any()
-        default_tokentype_pol = Match.realm(g, scope=SCOPE.WEBUI, action=ACTION.DEFAULT_TOKENTYPE,
-                                            realm=realm).action_values(unique=True)
-        show_seed = Match.realm(g, scope=SCOPE.WEBUI, action=ACTION.SHOW_SEED,
-                                realm=realm).any()
-        confirm_action = Match.realm(g, scope=SCOPE.WEBUI, action=ACTION.CONFIRM_ACTION,
-                                    realm=realm).action_values(unique=False, allow_white_space_in_action=True)
->>>>>>> db10d52e... Implement policy to diplay confirm_action dialogs
         token_page_size = DEFAULT_PAGE_SIZE
         user_page_size = DEFAULT_PAGE_SIZE
         default_tokentype = DEFAULT_TOKENTYPE
@@ -615,13 +598,9 @@ def get_webui_settings(request, response):
         content["result"]["value"]["show_seed"] = show_seed
         content["result"]["value"]["show_node"] = get_privacyidea_node() if show_node else ""
         content["result"]["value"]["subscription_status"] = subscription_status()
-<<<<<<< HEAD
         content["result"]["value"]["qr_image_android"] = qr_image_android
         content["result"]["value"]["qr_image_ios"] = qr_image_ios
         content["result"]["value"]["qr_image_custom"] = qr_image_custom
-=======
-        content["result"]["value"]["confirm_action"] = confirm_action
->>>>>>> db10d52e... Implement policy to diplay confirm_action dialogs
         response.set_data(json.dumps(content))
     return response
 
